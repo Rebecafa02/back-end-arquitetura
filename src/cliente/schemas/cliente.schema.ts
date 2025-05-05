@@ -25,6 +25,12 @@ export class Cliente{
     @Prop({required: true})
     bairro: string;
 
+    @Prop({required: true})
+    telefone: string;
+
+    @Prop({required: true})
+    cpfOuCnpj: string;
+
     @Prop()
     complemento: string;
 

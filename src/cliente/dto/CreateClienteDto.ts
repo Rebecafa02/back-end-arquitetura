@@ -16,6 +16,12 @@ export class CreateClienteDto {
   numero: string;
 
   @IsString()
+  telefone: string;
+
+  @IsString()
+  cpfOuCnpj: string;
+
+  @IsString()
   bairro: string;
 
   @IsOptional()
