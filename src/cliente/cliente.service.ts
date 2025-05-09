@@ -47,4 +47,15 @@ export class ClienteService {
       throw new NotFoundException(`Cliente com ID ${id} não encontrado`);
     }
   }
+
+  async findByName(nome: string, limit = 20): Promise<{ data: Cliente[]; total: number }> {
+    const query = nome.trim()
+      ? { nome_completo: { $regex: `.*${nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*`, $options: 'i' } }
+      : {};
+    const [data, total] = await Promise.all([
+      this.clienteModel.find(query).limit(limit).exec(),
+      this.clienteModel.countDocuments(query).exec(),
+    ]);
+    return { data, total };
+  }
 }

@@ -20,10 +20,16 @@ export class ClienteController {
     return this.clienteService.findAll(page, limit);
   }
 
+  @Get('buscar')
+  async buscarClientes(@Query('nome') nome: string){
+    return this.clienteService.findByName(nome);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.clienteService.findOne(id);
   }
+
 
   @Put(':id')
   update(@Param('id') id: string, @Body() updateClienteDto: UpdateClienteDto) {
@@ -34,4 +40,6 @@ export class ClienteController {
   remove(@Param('id') id: string) {
     return this.clienteService.remove(id);
   }
+
+  
 }
