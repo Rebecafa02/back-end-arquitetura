@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsEnum, IsOptional } from 'class-validator';
+import { IsString, IsEmail, IsEnum, IsOptional, IsArray, ArrayMinSize } from 'class-validator';
 import { ClienteTipo } from '../schemas/cliente.schema';
 
 
@@ -15,8 +15,10 @@ export class CreateClienteDto {
   @IsString()
   numero: string;
 
-  @IsString()
-  telefone: string;
+  @IsArray()
+  @ArrayMinSize(1) // Garante que pelo menos um telefone seja fornecido
+  @IsString({ each: true }) // Valida que cada item no array seja uma string
+  telefones: string[];
 
   @IsString()
   cpfOuCnpj: string;

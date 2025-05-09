@@ -9,10 +9,4 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
-
-  @Get("/ola")
-  ola(): string {
-    return "ola"
-  }
-
 }

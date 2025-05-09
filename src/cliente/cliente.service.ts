@@ -16,8 +16,13 @@ export class ClienteService {
     return cliente.save();
   }
 
-  async findAll(): Promise<Cliente[]> {
-    return this.clienteModel.find().exec();
+  async findAll(page = 1, limit = 10): Promise<{ data: Cliente[]; total: number }> {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.clienteModel.find().skip(skip).limit(limit).exec(),
+      this.clienteModel.countDocuments().exec(),
+    ]);
+    return { data, total };
   }
 
   async findOne(id: string): Promise<Cliente> {

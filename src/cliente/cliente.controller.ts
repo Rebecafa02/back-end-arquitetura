@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Query } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/CreateClienteDto';
 import { UpdateClienteDto } from './dto/UpdateClienteDto';
@@ -13,8 +13,11 @@ export class ClienteController {
   }
 
   @Get()
-  findAll() {
-    return this.clienteService.findAll();
+  findAll(
+    @Query('page') page?: number, // Página opcional
+    @Query('limit') limit?: number, // Limite opcional
+  ) {
+    return this.clienteService.findAll(page, limit);
   }
 
   @Get(':id')
