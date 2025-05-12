@@ -16,13 +16,12 @@ export class ClienteService {
     return cliente.save();
   }
 
-  async findAll(page = 1, limit = 10): Promise<{ data: Cliente[]; total: number }> {
+  async findAll(page = 1, limit = 10): Promise<Cliente[]> {
     const skip = (page - 1) * limit;
-    const [data, total] = await Promise.all([
-      this.clienteModel.find().skip(skip).limit(limit).exec(),
-      this.clienteModel.countDocuments().exec(),
-    ]);
-    return { data, total };
+    // .lean() retorna objetos simples, incluindo o _id
+    const clientes = await this.clienteModel.find().skip(skip).limit(limit).lean().exec();
+    // Mapeia para garantir que o id seja retornado como string
+    return clientes;
   }
 
   async findOne(id: string): Promise<Cliente> {
@@ -48,14 +47,25 @@ export class ClienteService {
     }
   }
 
-  async findByName(nome: string, limit = 20): Promise<{ data: Cliente[]; total: number }> {
-    const query = nome.trim()
-      ? { nome_completo: { $regex: `.*${nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*`, $options: 'i' } }
-      : {};
-    const [data, total] = await Promise.all([
-      this.clienteModel.find(query).limit(limit).exec(),
-      this.clienteModel.countDocuments(query).exec(),
-    ]);
-    return { data, total };
-  }
+  async findByName(nome: string, limit = 20) {
+  const query = nome.trim()
+    ? {
+        nome_completo: {
+          $regex: `.*${nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*`,
+          $options: 'i',
+        },
+      }
+    : {};
+
+  const [clientes, total] = await Promise.all([
+    this.clienteModel.find(query).limit(limit).exec(),
+    this.clienteModel.countDocuments(query).exec(),
+  ]);
+
+  return {
+    clientes,
+    total,
+  };
+}
+
 }

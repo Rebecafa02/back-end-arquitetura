@@ -21,7 +21,7 @@ export class ClienteController {
   }
 
   @Get('buscar')
-  async buscarClientes(@Query('nome') nome: string){
+  buscarClientes(@Query('nome') nome: string){
     return this.clienteService.findByName(nome);
   }
 
