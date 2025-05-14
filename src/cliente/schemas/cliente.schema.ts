@@ -13,6 +13,9 @@ export class Cliente {
   @Prop({ required: true })
   nome_completo: string;
 
+  @Prop({ type: String, index: true })
+  nome_completo_normalizado: string;
+
   @Prop({ required: true })
   email: string;
 
@@ -35,7 +38,7 @@ export class Cliente {
   })
   telefones: string[];
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   cpfOuCnpj: string;
 
   @Prop()
