@@ -4,13 +4,14 @@ import { UpdateTarefaDto } from './dto/update-tarefa.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Tarefa, TarefaDocument, Status } from './schemas/tarefa.entity';
 import { Model } from 'mongoose';
+import { normalizeText } from 'src/cliente/cliente.service';
 
 @Injectable()
 export class TarefaService {
   constructor(
-      @InjectModel(Tarefa.name) private tarefaModel: Model<TarefaDocument>,
-    ) {}
-  
+    @InjectModel(Tarefa.name) private tarefaModel: Model<TarefaDocument>,
+  ) {}
+
   async create(data: CreateTarefaDto): Promise<Tarefa> {
     const tarefa = new this.tarefaModel({ ...data, status: Status.ATIVO });
     return tarefa.save();
@@ -29,11 +30,13 @@ export class TarefaService {
   }
 
   async update(id: string, updateTarefaDto: UpdateTarefaDto): Promise<Tarefa> {
-    const updatedTarefa = await this.tarefaModel.findByIdAndUpdate(
-      id,
-      { ...updateTarefaDto, status: updateTarefaDto.status ?? Status.ATIVO },
-      { new: true },
-    ).exec();
+    const updatedTarefa = await this.tarefaModel
+      .findByIdAndUpdate(
+        id,
+        { ...updateTarefaDto, status: updateTarefaDto.status ?? Status.ATIVO },
+        { new: true },
+      )
+      .exec();
     if (!updatedTarefa) {
       throw new NotFoundException(`Tarefa com ID ${id} não encontrada`);
     }
@@ -45,5 +48,23 @@ export class TarefaService {
     if (!result) {
       throw new NotFoundException(`Tarefa com ID ${id} não encontrada`);
     }
+  }
+
+  async findByName(nome: string, limit = 20) {
+    const normalized = nome.trim()
+      ? {
+          nome: {
+            $regex: `.*${nome.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*`,
+            $options: 'i',
+          },
+        }
+      : {};
+
+    const [tarefas, total] = await Promise.all([
+      this.tarefaModel.find(normalized).limit(limit).exec(),
+      this.tarefaModel.countDocuments(normalized).exec(),
+    ]);
+
+    return { tarefas, total };
   }
 }

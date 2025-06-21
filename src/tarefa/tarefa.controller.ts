@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { TarefaService } from './tarefa.service';
 import { CreateTarefaDto } from './dto/create-tarefa.dto';
 import { UpdateTarefaDto } from './dto/update-tarefa.dto';
@@ -15,6 +24,11 @@ export class TarefaController {
   @Get()
   findAll() {
     return this.tarefaService.findAll();
+  }
+
+  @Get('buscar')
+  buscarTarefas(@Query('nome') nome: string) {
+    return this.tarefaService.findByName(nome);
   }
 
   @Get(':id')
