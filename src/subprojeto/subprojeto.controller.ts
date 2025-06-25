@@ -3,7 +3,7 @@ import { SubprojetoService } from './subprojeto.service';
 import { CreateSubprojetoDto } from './dto/create-subprojeto.dto';
 import { UpdateSubprojetoDto } from './dto/update-subprojeto.dto';
 
-@Controller('subprojeto')
+@Controller('subprojetos')
 export class SubprojetoController {
   constructor(private readonly subprojetoService: SubprojetoService) {}
 
