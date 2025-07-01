@@ -13,7 +13,7 @@ export class TarefaService {
   ) {}
 
   async create(data: CreateTarefaDto): Promise<Tarefa> {
-    const tarefa = new this.tarefaModel({ ...data, status: Status.ATIVO });
+    const tarefa = new this.tarefaModel(data);
     return tarefa.save();
   }
 
@@ -50,7 +50,7 @@ export class TarefaService {
     }
   }
 
-  async findByName(nome: string, limit = 20) {
+  async findByName(nome: string) {
     const normalized = nome.trim()
       ? {
           nome: {
@@ -61,7 +61,7 @@ export class TarefaService {
       : {};
 
     const [tarefas, total] = await Promise.all([
-      this.tarefaModel.find(normalized).limit(limit).exec(),
+      this.tarefaModel.find(normalized).exec(),
       this.tarefaModel.countDocuments(normalized).exec(),
     ]);
 

@@ -51,28 +51,21 @@ export class SubprojetoService {
     }
   }
 
-  /*async addTarefa(subprojetoId: string, tarefaId: string): Promise<Subprojeto> {
-    return this.subprojetoModel
-      .findByIdAndUpdate(
-        subprojetoId,
-        { $addToSet: { tarefas: tarefaId } },
-        { new: true },
-      )
-      .populate('tarefas')
-      .exec();
-  }
+  async findByName(nome: string) {
+    const normalized = nome.trim()
+      ? {
+          nome: {
+            $regex: `.*${nome.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*`,
+            $options: 'i',
+          },
+        }
+      : {};
 
-  async removeTarefa(
-    subprojetoId: string,
-    tarefaId: string,
-  ): Promise<Subprojeto> {
-    return this.subprojetoModel
-      .findByIdAndUpdate(
-        subprojetoId,
-        { $pull: { tarefas: tarefaId } },
-        { new: true },
-      )
-      .populate('tarefas')
-      .exec();
-  }*/
+    const [subprojetos, total] = await Promise.all([
+      this.subprojetoModel.find(normalized).exec(),
+      this.subprojetoModel.countDocuments(normalized).exec(),
+    ]);
+
+    return { subprojetos, total };
+  }
 }

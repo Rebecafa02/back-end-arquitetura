@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { SubprojetoService } from './subprojeto.service';
 import { CreateSubprojetoDto } from './dto/create-subprojeto.dto';
 import { UpdateSubprojetoDto } from './dto/update-subprojeto.dto';
@@ -16,6 +16,11 @@ export class SubprojetoController {
   findAll() {
     return this.subprojetoService.findAll();
   }
+
+  @Get('buscar')
+    buscarTarefas(@Query('nome') nome: string) {
+      return this.subprojetoService.findByName(nome);
+    }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
